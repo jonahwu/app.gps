@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 //mport 'dart:io';
 import 'dart:async';
+import 'package:uuid/uuid.dart';
 
 void main() => runApp(MyApp());
 
@@ -50,11 +51,19 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter1 =0;
   int _counter2 =0;
    
+
+void genUUID(){
+  var uuidd = new Uuid();
+  var ww;
+  ww = uuidd.v4();
+  print('AutoRender now ...%s  $ww');
+}   
 void autoRender() async {
   print('i am in AutoRender ');
   while (true) {
     await Future.delayed(Duration(seconds: 4), () {
       print('AutoRender now ... ');
+      genUUID();
      // _incrementCounter()
      setState((){
        _counter++;
