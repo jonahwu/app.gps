@@ -77,17 +77,8 @@ void autoRender() async {
     });
   }
 }
-void getGPS()async{
 
-/*
-  Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-  print('lat: $position.latitude');
-  print('lat: $position.longitude');
-      setState(()  {
-        _counter1= position.latitude;
-        _counter2= position.longitude;
-      });
-*/
+void getGPSPersistence()async{
   
 var geolocator = Geolocator();
 var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
@@ -95,18 +86,40 @@ int gcounter=0;
 StreamSubscription<Position> positionStream = geolocator.getPositionStream(locationOptions).listen(
     (Position position) {
         print(position == null ? 'Unknown' : position.latitude.toString() + ', ' + position.longitude.toString());
-        print('------ lat: $position.latitude');
-        print('------ lon: $position.longitude');
+        print('------ Persistence lat: $position.latitude');
+        print('------ Persistence lon: $position.longitude');
         gcounter= gcounter +1;
-        print('------ gps counter: $gpscounter');
+        print('------ Persistence gps counter: $gpscounter');
+    });
+   
+}
+void getGPS()async{
 
-        setState(()  {
+ int gcounter=0; 
+ /*
+  Position position1 = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+   print('lat: $position1.latitude');
+  print('lat: $position1.longitude');
+  */
+ getGPSPersistence();
+ while (true) {
+   print ('get gps  ....');
+  Position position = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
+
+  print('lat: $position.latitude');
+  print('lat: $position.longitude');
+  gcounter=gcounter+1;
+      setState(()  {
         _counter1= position.latitude;
         _counter2= position.longitude;
-        gpscounter=gcounter;
+        gpscounter = gcounter;
       });
-    });
-    
+  await Future.delayed(Duration(seconds: 1), () {
+  print('wait');
+  });
+ }
+
+
 }
   void _incrementCounter() {
     getGPS();
@@ -119,7 +132,7 @@ StreamSubscription<Position> positionStream = geolocator.getPositionStream(locat
   //  while (true){
       _counter++;
    //   sleep(const Duration(seconds:3));
-      autoRender();
+   //  autoRender();
    //   }
     });
   }
