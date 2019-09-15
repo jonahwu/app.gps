@@ -1,7 +1,12 @@
+
 import 'package:flutter/material.dart';
 //mport 'dart:io';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
+//import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
+
+
 
 void main() => runApp(MyApp());
 
@@ -48,15 +53,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  int _counter1 =0;
-  int _counter2 =0;
-   
+  double _counter1 = 1.2;
+  double _counter2 =1.333;
+  
 
 void genUUID(){
   var uuidd = new Uuid();
   var ww;
   ww = uuidd.v4();
-  print('AutoRender now ...%s  $ww');
+  print('AutoRender now ...$ww');
 }   
 void autoRender() async {
   print('i am in AutoRender ');
@@ -71,8 +76,35 @@ void autoRender() async {
     });
   }
 }
+void getGPS()async{
 
+/*
+  Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  print('lat: $position.latitude');
+  print('lat: $position.longitude');
+      setState(()  {
+        _counter1= position.latitude;
+        _counter2= position.longitude;
+      });
+*/
+  
+var geolocator = Geolocator();
+var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
+
+StreamSubscription<Position> positionStream = geolocator.getPositionStream(locationOptions).listen(
+    (Position position) {
+        print(position == null ? 'Unknown' : position.latitude.toString() + ', ' + position.longitude.toString());
+        setState(()  {
+        print('lat: $position.latitude');
+        print('lat: $position.longitude');
+        _counter1= position.latitude;
+        _counter2= position.longitude;
+      });
+    });
+    
+}
   void _incrementCounter() {
+    getGPS();
     setState(()  {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
