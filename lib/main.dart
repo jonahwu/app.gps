@@ -105,13 +105,13 @@ void getGPS()async{
  while (true) {
    print ('get gps  ....');
   Position position = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
-
+  
   print('lat: $position.latitude');
   print('lat: $position.longitude');
   gcounter=gcounter+1;
       setState(()  {
-        _counter1= position.latitude;
-        _counter2= position.longitude;
+        _counter1= double.parse(position.latitude. toStringAsFixed(6));
+        _counter2= double.parse(position.longitude.toStringAsFixed(6));
         gpscounter = gcounter;
       });
   await Future.delayed(Duration(seconds: 1), () {
