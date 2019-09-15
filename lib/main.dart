@@ -55,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   double _counter1 = 1.2;
   double _counter2 =1.333;
+  int gpscounter = 0;
   
 
 void genUUID(){
@@ -90,15 +91,19 @@ void getGPS()async{
   
 var geolocator = Geolocator();
 var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
-
+int gcounter=0;
 StreamSubscription<Position> positionStream = geolocator.getPositionStream(locationOptions).listen(
     (Position position) {
         print(position == null ? 'Unknown' : position.latitude.toString() + ', ' + position.longitude.toString());
+        print('------ lat: $position.latitude');
+        print('------ lon: $position.longitude');
+        gcounter= gcounter +1;
+        print('------ gps counter: $gpscounter');
+
         setState(()  {
-        print('lat: $position.latitude');
-        print('lat: $position.longitude');
         _counter1= position.latitude;
         _counter2= position.longitude;
+        gpscounter=gcounter;
       });
     });
     
@@ -166,6 +171,10 @@ StreamSubscription<Position> positionStream = geolocator.getPositionStream(locat
             ),
                 Text(
               '$_counter2',
+              style: Theme.of(context).textTheme.display1,
+            ),
+                 Text(
+              '$gpscounter',
               style: Theme.of(context).textTheme.display1,
             ),
           ],
