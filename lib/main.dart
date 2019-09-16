@@ -80,7 +80,7 @@ void autoRender() async {
   }
 }
 
-void getGPSPersistence()async{
+void getGPSPersistence() async {
   
 var geolocator = Geolocator();
 var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
@@ -101,7 +101,8 @@ Future<double> velocity (double oldLat, double oldLon, double curLat, double cur
 
   //double distanceInMeters = 0.333123;
   print ('---- distance $distanceInMeters');
-  return double.parse((distanceInMeters/1000.0/speedPeriod).toStringAsFixed(2));
+  //(km/hr)
+  return double.parse((3.6 * distanceInMeters / speedPeriod).toStringAsFixed(2)); 
 } 
 void getGPS()async{
 
@@ -130,7 +131,7 @@ void getGPS()async{
   Position position = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
   
   print('lat: $position.latitude');
-  print('lat: $position.longitude');
+  print('lon: $position.longitude');
   gcounter=gcounter+1;
  
   curLat = double.parse(position.latitude. toStringAsFixed(5));
