@@ -56,6 +56,8 @@ class _MyHomePageState extends State<MyHomePage> {
   double _counter1 = 1.2;
   double _counter2 =1.333;
   int gpscounter = 0;
+  double _vel=0.0;
+  int speedPeriod=1;
   
 
 void genUUID(){
@@ -93,28 +95,55 @@ StreamSubscription<Position> positionStream = geolocator.getPositionStream(locat
     });
    
 }
+Future<double> velocity (double oldLat, double oldLon, double curLat, double curLon, int speedPeriod) async {
+  //double distanceInMeters =  await Geolocator().distanceBetween(oldLat, oldLon, curLat, curLon);
+   double distanceInMeters =  await Geolocator().distanceBetween(oldLat, oldLon,  curLat, curLon);
+
+  //double distanceInMeters = 0.333123;
+  print ('---- distance $distanceInMeters');
+  return double.parse((distanceInMeters/1000.0/speedPeriod).toStringAsFixed(2));
+} 
 void getGPS()async{
 
  int gcounter=0; 
+ var oldLat;
+ var oldLon;
+ var curLat;
+ var curLon;
+ //GeolocationStatus geolocationStatus  = await Geolocator().checkGeolocationPermissionStatus();
+ //print('$geolocationStatus');
  /*
   Position position1 = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
    print('lat: $position1.latitude');
   print('lat: $position1.longitude');
   */
  getGPSPersistence();
+
+  Position positiontmp = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
+  curLat = double.parse(positiontmp.latitude. toStringAsFixed(5));
+  curLon = double.parse(positiontmp.longitude.toStringAsFixed(5));
+
  while (true) {
    print ('get gps  ....');
+  oldLat = curLat;
+  oldLon = curLon;
   Position position = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
   
   print('lat: $position.latitude');
   print('lat: $position.longitude');
   gcounter=gcounter+1;
+ 
+  curLat = double.parse(position.latitude. toStringAsFixed(5));
+  curLon = double.parse(position.longitude.toStringAsFixed(5));
+  _vel = await velocity(oldLat, oldLon, curLat, curLon, speedPeriod);
+  //Future.delayed(const Duration(seconds: 1), () => velocity(oldLat, oldLon, curLat, curLon));
+
       setState(()  {
-        _counter1= double.parse(position.latitude. toStringAsFixed(6));
-        _counter2= double.parse(position.longitude.toStringAsFixed(6));
+        _counter1= curLat;
+        _counter2= curLon; 
         gpscounter = gcounter;
       });
-  await Future.delayed(Duration(seconds: 1), () {
+  await Future.delayed(Duration(seconds: speedPeriod), () {
   print('wait');
   });
  }
@@ -186,8 +215,12 @@ void getGPS()async{
               '$_counter2',
               style: Theme.of(context).textTheme.display1,
             ),
-                 Text(
+                Text(
               '$gpscounter',
+              style: Theme.of(context).textTheme.display1,
+            ),
+                Text(
+              '$_vel',
               style: Theme.of(context).textTheme.display1,
             ),
           ],
